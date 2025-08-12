@@ -1,0 +1,42 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential sqlite3
+
+      - name: Build sqlite3.c (C)
+        run: gcc -std=c17 -Iinclude -c src/sqlite3.c -o sqlite3.o
+
+      - name: Build app (C++)
+        run: g++ -std=c++20 -Iinclude src/main.cpp sqlite3.o -o bankapp
+
+      - name: Run app to apply schema
+        run: ./bankapp
+
+      - name: Verify tables exist
+        run: |
+          sqlite3 bank.db ".tables"
+          # optional: fail if expected tables are missing
+          sqlite3 bank.db ".tables" | grep -q "Customer" && echo "Customer OK" || (echo "Missing Customer" && exit 1)
+          sqlite3 bank.db ".tables" | grep -q "Account" && echo "Account OK" || (echo "Missing Account" && exit 1)
+          sqlite3 bank.db ".tables" | grep -q "Transactions" && echo "Transactions OK" || (echo "Missing Transactions" && exit 1)
+
+      - name: Upload DB artifact (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bank-db
+          path: bank.db
