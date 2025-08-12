@@ -5,7 +5,7 @@ The goal is to implement secure account management, transaction handling, and re
 
 > **Status:** 🛠 Early Development  
 > Core schema creation and database integration are working.  
-> Next steps: implementing customer/account operations and transaction handling.
+> Next steps: implementing customer/account operations and transaction-handling.
 
 ---
 
