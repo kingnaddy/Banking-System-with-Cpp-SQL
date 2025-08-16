@@ -11,7 +11,7 @@ int main(){
         return -1;
     }
     std::ifstream f("sql/schema.sql");
-    if (!f) { std::cerr << "Failed to open schema.sql\n"; sqlite3_close(DB); return -1; }
+    if (!f) { std::cerr << "Failed to open file schema.sql\n"; sqlite3_close(DB); return -1; }
     std::stringstream buf; buf << f.rdbuf();
     char* err = nullptr;
     if (sqlite3_exec(DB, buf.str().c_str(), nullptr, nullptr, &err) != SQLITE_OK) {
